@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import EdaButton from './UI/button/EdaButton'
-import EdaTable from "./UI/table/EdaTable";
+import EdaTable from './UI/table/EdaTable';
+import valueCounts from './features/ValueCounts'
 import '../styles/Eda.css'
 
 import trashCan from '../assets/trash-can.svg'
@@ -58,12 +59,21 @@ export default function Eda({ data }) {
             "Количество уникальных значений", "Размер множества неповторяемых значений");
     };
 
+    const handleValueCountsClick = () => {
+        handleEdaAction('value counts', () => {
+            const valueCountsValues = valueCounts(data.values, data.columns);;
+            return { columns: data.columns, values: [valueCountsValues] };
+        },
+            "Частота встречаемости значений", "Количество раз встречаемости каждого уникального значения");
+    };
+
     return (
         <div className="eda-wrapper">
             <ul className="eda-block">
                 <img src={trashCan} className="trash-can" alt="del" onClick={resetEdaState}></img>
                 <EdaButton onClick={handleNullClick} descr="Показать количество пропущенных значений">null</EdaButton>
                 <EdaButton onClick={handleUniqueClick} descr="Показать количество уникальных значений">unique</EdaButton>
+                <EdaButton onClick={handleValueCountsClick} descr="Показать частоту встречаемости значений">value counts</EdaButton>
             </ul>
             {values.length > 0 && (
                 <>

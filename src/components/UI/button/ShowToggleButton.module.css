@@ -1,0 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+.ShowToggleButton {
+  padding: 8px 12px;
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.4s;
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  width: 100%;
+}

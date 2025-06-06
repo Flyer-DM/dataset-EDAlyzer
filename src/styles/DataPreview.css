@@ -4,8 +4,9 @@
   box-sizing: border-box;
 }
 
-ul, li {  
-    list-style: none; 
+ul,
+li {
+  list-style: none;
 }
 
 /********* Кастомная таблица *********/
@@ -40,6 +41,7 @@ ul, li {
   text-align: left;
   position: relative;
   white-space: nowrap;
+  vertical-align: top;
 }
 
 .smart-table td {

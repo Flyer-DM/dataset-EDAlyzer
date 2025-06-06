@@ -52,22 +52,24 @@ function Body() {
   const [df, setDf] = useState(null);
 
   return (
-    <>
-      <div className="first-center-container">
+    <main>
+      <section className="first-center-container">
         <h1 className="main-text">Анализатор датасетов</h1>
         <span className="subtitle-text">Инструмент для автоматического <strong>EDA анализа</strong> датасетов с разнообразными данными</span>
         <UploadCSV onDataParsed={setDf} />
-      </div>
+      </section>
 
-      <div className="table-preview-container">
+      <section>
         <ErrorBoundary>
-          {df && <DataPreview data={df} />}
+          <div className="table-preview-container">
+            {df && <DataPreview data={df} />}
+          </div>
+          <div className="eda-container">
+            {df && <Eda data={df} />}
+          </div>
         </ErrorBoundary>
-      </div>
-      <div className="eda-container">
-        {df && <Eda data={df} />}
-      </div>
-    </>
+      </section>
+    </main>
   );
 }
 

@@ -6,9 +6,13 @@
   box-sizing: border-box;
 }
 
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .eduButton {
   padding: 8px 12px;
-  border: none;
   font-family: inherit;
   text-align: center;
   cursor: pointer;

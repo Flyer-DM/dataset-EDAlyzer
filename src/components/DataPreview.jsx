@@ -16,6 +16,25 @@ function ChangeArrows({ onClick }) {
     );
 }
 
+function countDuplicateRows(values) {
+    const rowCounts = new Map();
+    let duplicateCount = 0;
+
+    for (const row of values) {
+        const key = JSON.stringify(row);
+        const count = rowCounts.get(key) || 0;
+        rowCounts.set(key, count + 1);
+    }
+
+    for (const count of rowCounts.values()) {
+        if (count > 1) {
+            duplicateCount += count - 1;  // считаем все повторы, кроме первого
+        }
+    }
+
+    return duplicateCount;
+}
+
 
 function PreviewTable({ columns, values, dtypes }) {
     const maxRows = 5;
@@ -67,6 +86,7 @@ function PreviewTable({ columns, values, dtypes }) {
                     <ChangeArrows onClick={() => setFlipped(!flipped)} />
                 </ul>
                 <ul className="action-bar-left">
+                    <li title="полностью идентичные записи"><span>Дублей: </span><strong>{countDuplicateRows(values)}</strong></li>
                     <li><span>Столбцов: </span><strong>{columns.length}</strong></li>
                     <li><span>Строк: </span><strong>{totalRows}</strong></li>
                 </ul>
@@ -80,20 +100,27 @@ function PreviewTable({ columns, values, dtypes }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {getValues(headRows).map((row, i) => (
-                                <tr key={`head-${i}`}>{renderRow(row, i)}</tr>
-                            ))}
-                            {totalRows > maxRows * 2 && (
-                                <tr className="ellipsis">
-                                    <td colSpan={columns.length}>
-                                        ... {totalRows - maxRows * 2} строк скрыто ...
-                                    </td>
-                                </tr>
+                            {totalRows <= 10 ? (
+                                getValues(values).map((row, i) => (
+                                    <tr key={`row-${i}`}>{renderRow(row, i)}</tr>
+                                ))
+                            ) : (
+                                <>
+                                    {getValues(headRows).map((row, i) => (
+                                        <tr key={`head-${i}`}>{renderRow(row, i)}</tr>
+                                    ))}
+                                    {totalRows > maxRows * 2 && (
+                                        <tr className="ellipsis">
+                                            <td colSpan={columns.length}>
+                                                ... {totalRows - maxRows * 2} строк скрыто ...
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {getValues(tailRows).map((row, i) => (
+                                        <tr key={`tail-${i}`}>{renderRow(row, totalRows - maxRows + i)}</tr>
+                                    ))}
+                                </>
                             )}
-                            {totalRows > maxRows &&
-                                getValues(tailRows).map((row, i) => (
-                                    <tr key={`tail-${i}`}>{renderRow(row, totalRows - maxRows + i)}</tr>
-                                ))}
                         </tbody>
                     </table>
                 </div>
