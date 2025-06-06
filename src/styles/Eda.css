@@ -1,0 +1,42 @@
+.eda-wrapper {
+  width: 80%;
+}
+
+.eda-block {
+  display: flex;
+  gap: 5px;
+  height: 45px;
+  margin-left: 10px;
+}
+
+.eda-descr-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.eda-main-text {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  margin: 0;
+  text-decoration: none;
+  color: black;
+  font-weight: 600;
+  font-size: 1.6vw;
+}
+
+.eda-subtitle-text {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  margin: 0;
+  font-weight: 400;
+  font-size: 0.8vw;
+}
+
+.trash-can {
+  height: 34px;
+  cursor: pointer;
+}

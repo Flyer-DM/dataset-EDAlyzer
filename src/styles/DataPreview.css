@@ -15,6 +15,12 @@ ul, li {
   padding-bottom: 1rem;
 }
 
+.eda-table-scroll-container {
+  overflow-x: auto;
+  width: 100%;
+  padding-bottom: 1rem;
+}
+
 .smart-table {
   width: fit-content;
   min-width: 100%;

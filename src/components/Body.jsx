@@ -2,6 +2,7 @@ import { useState } from 'react';
 import * as dfd from 'danfojs';
 import DataPreview from './DataPreview'
 import ErrorBoundary from './ErrorBoundary'
+import Eda from './Eda'
 import '../styles/Body.css'
 
 
@@ -62,6 +63,9 @@ function Body() {
         <ErrorBoundary>
           {df && <DataPreview data={df} />}
         </ErrorBoundary>
+      </div>
+      <div className="eda-container">
+        {df && <Eda data={df} />}
       </div>
     </>
   );
