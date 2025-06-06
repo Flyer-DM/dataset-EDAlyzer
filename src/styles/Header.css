@@ -1,0 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+.header {
+  border-bottom: 0.5px solid;
+  display: flex;
+}
+
+.header-left {
+  float: left;
+  flex-shrink: 0;
+  margin-left: 25px;
+  margin-right: auto;
+}
+
+.header-right {
+  float: right;
+  margin-right: 25px;
+}
+
+.header-title,
+.github-link {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  margin: 0;
+  text-decoration: none;
+  color: black;
+}
+
+.header-title {
+  font-weight: 400;
+}
+
+.github-link {
+  font-weight: 200;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1.5em;
+}

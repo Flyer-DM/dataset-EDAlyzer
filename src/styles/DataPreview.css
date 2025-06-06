@@ -1,0 +1,116 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul, li {  
+    list-style: none; 
+}
+
+/********* Кастомная таблица *********/
+.table-scroll-container {
+  overflow-x: auto;
+  width: 80%;
+  padding-bottom: 1rem;
+}
+
+.smart-table {
+  width: fit-content;
+  min-width: 100%;
+  overflow-x: auto;
+}
+
+.smart-table table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: monospace;
+}
+
+.smart-table th,
+.smart-table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+  position: relative;
+  white-space: nowrap;
+}
+
+.smart-table td {
+  cursor: pointer;
+}
+
+.smart-table th {
+  background-color: #f4f4f4;
+}
+
+.smart-table .ellipsis td {
+  text-align: center;
+  font-style: italic;
+  background-color: #fafafa;
+  color: #666;
+  cursor: default;
+}
+
+.copy-cell:hover {
+  background-color: #eef;
+}
+
+.copied-popup {
+  position: absolute;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4caf50;
+  color: white;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  animation: fadeOut 1s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/********* Конец *********/
+.table-settings-container {
+  display: flex;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: center;
+  width: 80%;
+}
+
+.action-bar-right {
+  display: flex;
+  justify-content: flex-start;
+  width: 50%;
+  gap: 8px;
+  margin-left: 10px;
+}
+
+.action-bar-left {
+  display: flex;
+  justify-content: flex-end;
+  width: 50%;
+  gap: 10px;
+  margin-right: 10px;
+}
+
+.action-bar-left * {
+  font-family: monospace;
+  padding-top: 10px;
+}
