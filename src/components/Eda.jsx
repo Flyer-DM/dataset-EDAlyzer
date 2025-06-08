@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import EdaButton from './UI/button/EdaButton'
 import EdaTable from './UI/table/EdaTable';
 import valueCounts from './features/ValueCounts'
+import NumberDescription from './features/NumberDescription'
 import '../styles/Eda.css'
 
 import trashCan from '../assets/trash-can.svg'
@@ -9,15 +10,16 @@ import trashCan from '../assets/trash-can.svg'
 
 export default function Eda({ data }) {
 
-    const [columns, setColumns] = useState([]);
-    const [values, setValues] = useState([]);
     const [tableTitle, setTitle] = useState("");
     const [tableDescription, setDescription] = useState("");
     const [cache, setCache] = useState({});  // кеш вычисленных табличных значений
+    const [loading, setLoading] = useState(null);  // индикатор загрузки
+
+    const dataRef = useRef({ columns: [], values: [] });
+    const [renderedData, setRenderedData] = useState({ columns: [], values: [] });
 
     const resetEdaState = useCallback(() => {
-        setColumns([]);
-        setValues([]);
+        setRenderedData({ columns: [], values: [] });
         setCache({});
         setTitle("");
         setDescription("");
@@ -28,19 +30,24 @@ export default function Eda({ data }) {
     }, [data, resetEdaState]);
 
 
-    const handleEdaAction = (key, computeFn, title, description) => {
+    const handleEdaAction = async (key, computeFn, title, description) => {
         setTitle(title);
         setDescription(description);
+        setRenderedData({ columns: [], values: [] }); // очищаем UI перед загрузкой
+        setLoading(true);
+
         if (cache[key]) {
-            setColumns(cache[key].columns);
-            setValues(cache[key].values);
+            dataRef.current = cache[key];
+            setRenderedData(cache[key]);
+            setLoading(false);
             return;
         }
 
-        const result = computeFn();
+        const result = await computeFn();
         setCache(prev => ({ ...prev, [key]: result }));
-        setColumns(result.columns);
-        setValues(result.values);
+        dataRef.current = result;
+        setRenderedData(result);
+        setLoading(false);
     };
 
     const handleNullClick = () => {
@@ -61,29 +68,45 @@ export default function Eda({ data }) {
 
     const handleValueCountsClick = () => {
         handleEdaAction('value counts', () => {
-            const valueCountsValues = valueCounts(data.values, data.columns);;
+            const valueCountsValues = valueCounts(data.values, data.columns);
             return { columns: data.columns, values: [valueCountsValues] };
         },
             "Частота встречаемости значений", "Количество раз встречаемости каждого уникального значения");
     };
 
+    const handleDescriptionClick = () => {
+        handleEdaAction('describe', () => {
+            const describeDf = NumberDescription(data.values, data.columns);
+            return { columns: describeDf.columns, values: describeDf.values };
+        },
+            "Описательная статистика", "Статистика числовых данных (без учёта пропущенных значений)");
+    };
+
     return (
         <div className="eda-wrapper">
-            <ul className="eda-block">
-                <img src={trashCan} className="trash-can" alt="del" onClick={resetEdaState}></img>
-                <EdaButton onClick={handleNullClick} descr="Показать количество пропущенных значений">null</EdaButton>
-                <EdaButton onClick={handleUniqueClick} descr="Показать количество уникальных значений">unique</EdaButton>
-                <EdaButton onClick={handleValueCountsClick} descr="Показать частоту встречаемости значений">value counts</EdaButton>
-            </ul>
-            {values.length > 0 && (
+            <div className="eda-block">
+                <img src={trashCan} className="trash-can" alt="del" onClick={resetEdaState} />
+                <ul className="eda-section">
+                    <EdaButton onClick={handleNullClick} descr="Показать количество пропущенных значений">null</EdaButton>
+                    <EdaButton onClick={handleUniqueClick} descr="Показать количество уникальных значений">unique</EdaButton>
+                    <EdaButton onClick={handleValueCountsClick} descr="Показать частоту встречаемости значений">value counts</EdaButton>
+                </ul>
+                <ul className="eda-section">
+                    <EdaButton onClick={handleDescriptionClick} descr="Описательная статистика числовых данных">describe</EdaButton>
+                </ul>
+            </div>
+
+            {loading && <div className="loader">Загрузка...</div>}
+
+            {renderedData.values.length > 0 && !loading && (
                 <>
                     <div className="eda-descr-container">
                         <h1 className="eda-main-text">{tableTitle}</h1>
                         <span className="eda-subtitle-text">{tableDescription}</span>
                     </div>
-                    <EdaTable columns={columns} values={values} />
+                    <EdaTable columns={renderedData.columns} values={renderedData.values} />
                 </>
             )}
         </div>
-    )
+    );
 }

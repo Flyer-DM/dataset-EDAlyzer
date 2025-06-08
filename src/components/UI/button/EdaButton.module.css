@@ -13,7 +13,7 @@
 
 .eduButton {
   padding: 8px 12px;
-  font-family: inherit;
+  font-family: "Roboto", sans-serif;
   text-align: center;
   cursor: pointer;
   transition: 0.4s;
@@ -27,7 +27,7 @@
   background-color: #eef;
 }
 
-.eduButton strong {
+.eduButton * {
   font-family: "Roboto", sans-serif;
 }
 
