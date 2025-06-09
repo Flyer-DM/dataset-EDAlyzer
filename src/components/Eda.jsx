@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import EdaButton from './UI/button/EdaButton'
 import EdaTable from './UI/table/EdaTable';
 import valueCounts from './features/ValueCounts'
-import NumberDescription from './features/NumberDescription'
+import NumberDescriptionWrapper from './features/NumberDescriptionWrapper'
 import '../styles/Eda.css'
 
 import trashCan from '../assets/trash-can.svg'
@@ -12,9 +12,11 @@ export default function Eda({ data }) {
 
     const [tableTitle, setTitle] = useState("");
     const [tableDescription, setDescription] = useState("");
-    const [cache, setCache] = useState({});  // кеш вычисленных табличных значений
-    const [loading, setLoading] = useState(null);  // индикатор загрузки
 
+    const [loading, setLoading] = useState(null);  // индикатор загрузки
+    const [progress, setProgress] = useState(0);  // прогресс бар загрузки
+
+    const [cache, setCache] = useState({});  // кеш вычисленных табличных значений
     const dataRef = useRef({ columns: [], values: [] });
     const [renderedData, setRenderedData] = useState({ columns: [], values: [] });
 
@@ -67,6 +69,7 @@ export default function Eda({ data }) {
     };
 
     const handleValueCountsClick = () => {
+        setProgress(0);
         handleEdaAction('value counts', () => {
             const valueCountsValues = valueCounts(data.values, data.columns);
             return { columns: data.columns, values: [valueCountsValues] };
@@ -74,9 +77,9 @@ export default function Eda({ data }) {
             "Частота встречаемости значений", "Количество раз встречаемости каждого уникального значения");
     };
 
-    const handleDescriptionClick = () => {
-        handleEdaAction('describe', () => {
-            const describeDf = NumberDescription(data.values, data.columns);
+    const handleDescriptionClick = async () => {
+        handleEdaAction('describe', async () => {
+            const describeDf = await NumberDescriptionWrapper(data.values, data.columns, setProgress);
             return { columns: describeDf.columns, values: describeDf.values };
         },
             "Описательная статистика", "Статистика числовых данных (без учёта пропущенных значений)");
@@ -96,9 +99,14 @@ export default function Eda({ data }) {
                 </ul>
             </div>
 
-            {loading && <div className="loader">Загрузка...</div>}
+            {loading && (
+                <div className="loader">
+                    Загрузка... {progress}%
+                    <progress value={progress} max="100" />
+                </div>
+            )}
 
-            {renderedData.values.length > 0 && !loading && (
+            {renderedData.values && renderedData.values.length > 0 && !loading && (
                 <>
                     <div className="eda-descr-container">
                         <h1 className="eda-main-text">{tableTitle}</h1>
