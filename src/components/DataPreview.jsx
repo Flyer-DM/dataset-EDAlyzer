@@ -1,39 +1,9 @@
 import { useState } from "react";
+import countDuplicateRows from './features/CountDuplicateRows'
+import MyInput from './UI/input/MyInput'
+import EdaTable from './UI/table/EdaTable'
+import ChangeArrows from "../assets/changeArrows";
 import '../styles/DataPreview.css';
-
-function ChangeArrows({ onClick }) {
-    return (
-        <svg
-            onClick={onClick}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            style={{ cursor: 'pointer', marginBottom: '10px' }}
-        >
-            <path fill="currentColor" d="M7 7V4l-5 5l5 5V9h10V7H7Zm10 10v3l5-5l-5-5v3H7v2h10Z" />
-        </svg>
-    );
-}
-
-function countDuplicateRows(values) {
-    const rowCounts = new Map();
-    let duplicateCount = 0;
-
-    for (const row of values) {
-        const key = JSON.stringify(row);
-        const count = rowCounts.get(key) || 0;
-        rowCounts.set(key, count + 1);
-    }
-
-    for (const count of rowCounts.values()) {
-        if (count > 1) {
-            duplicateCount += count - 1;  // считаем все повторы, кроме первого
-        }
-    }
-
-    return duplicateCount;
-}
 
 
 function PreviewTable({ columns, values, dtypes }) {
@@ -45,6 +15,34 @@ function PreviewTable({ columns, values, dtypes }) {
 
     const [flipped, setFlipped] = useState(false);
     const [copiedCell, setCopiedCell] = useState(null);
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+
+        if (!query) {
+            setSearchResults([]);
+            return;
+        }
+
+        const lowerQuery = query.toLowerCase();
+        const results = [];
+
+        for (let i = 0; i < values.length; i++) {
+            for (let j = 0; j < columns.length; j++) {
+                const cell = String(values[i][j]).toLowerCase();
+                if (cell.includes(lowerQuery)) {
+                    results.push(values[i]);
+                    break;
+                }
+            }
+            if (results.length >= 5) break;
+        }
+
+        setSearchResults(results);
+    };
 
     { / обработка копирования в буфер обмена при нажатии на ячейку/ }
     const handleCopy = async (text, rowIdx, colIdx) => {
@@ -86,11 +84,32 @@ function PreviewTable({ columns, values, dtypes }) {
                     <ChangeArrows onClick={() => setFlipped(!flipped)} />
                 </ul>
                 <ul className="action-bar-left">
+                    <li>
+                        <form>
+                            <label>
+                                <MyInput type="text" placeholder="Поиск..." onChange={(e) => handleSearch(e.target.value)} value={searchQuery} />
+                            </label>
+                        </form>
+                    </li>
                     <li title="полностью идентичные записи"><span>Дублей: </span><strong>{countDuplicateRows(values)}</strong></li>
                     <li><span>Столбцов: </span><strong>{columns.length}</strong></li>
                     <li><span>Строк: </span><strong>{totalRows}</strong></li>
                 </ul>
             </div>
+            {searchResults.length > 0 && (
+                <div className="search-overlay" onClick={() => setSearchResults([])}>
+                    <div
+                        className="search-popup"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="popup-header">
+                            <span>Результаты поиска:</span>
+                            <button onClick={() => setSearchResults([])}>✖</button>
+                        </div>
+                        <EdaTable columns={columns} values={searchResults} />
+                    </div>
+                </div>
+            )}
             <div className="table-scroll-container">
                 <div className="smart-table">
                     <table>
