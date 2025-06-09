@@ -3,8 +3,8 @@ import EdaButton from './UI/button/EdaButton'
 import EdaTable from './UI/table/EdaTable';
 import valueCounts from './features/ValueCounts'
 import NumberDescriptionWrapper from './features/NumberDescriptionWrapper'
+import NumberCorrelationHeatmap from './features/NumberCorrelation'
 import '../styles/Eda.css'
-
 import trashCan from '../assets/trash-can.svg'
 
 
@@ -19,12 +19,14 @@ export default function Eda({ data }) {
     const [cache, setCache] = useState({});  // кеш вычисленных табличных значений
     const dataRef = useRef({ columns: [], values: [] });
     const [renderedData, setRenderedData] = useState({ columns: [], values: [] });
+    const [customComponent, setCustomComponent] = useState(null);
 
     const resetEdaState = useCallback(() => {
         setRenderedData({ columns: [], values: [] });
         setCache({});
         setTitle("");
         setDescription("");
+        setCustomComponent(null);
     }, []);
 
     useEffect(() => {
@@ -37,6 +39,7 @@ export default function Eda({ data }) {
         setDescription(description);
         setRenderedData({ columns: [], values: [] }); // очищаем UI перед загрузкой
         setLoading(true);
+        setCustomComponent(null);
 
         if (cache[key]) {
             dataRef.current = cache[key];
@@ -85,6 +88,15 @@ export default function Eda({ data }) {
             "Описательная статистика", "Статистика числовых данных (без учёта пропущенных значений)");
     };
 
+    const handleCorrelationClick = () => {
+        setTitle("Корреляция признаков");
+        setDescription("Матрица корреляции Пирсона между числовыми признаками. +1 — идеальная положительная корреляция: при увеличении одной переменной другая также растёт. -1 — идеальная отрицательная корреляция: при увеличении одной переменной другая уменьшается. 0 — отсутствие линейной корреляции.");
+
+        setRenderedData({ columns: [], values: [] });
+        setLoading(false);
+        setCustomComponent(<NumberCorrelationHeatmap df={data} />);
+    };
+
     return (
         <div className="eda-wrapper">
             <div className="eda-block">
@@ -96,6 +108,7 @@ export default function Eda({ data }) {
                 </ul>
                 <ul className="eda-section">
                     <EdaButton onClick={handleDescriptionClick} descr="Описательная статистика числовых данных">describe</EdaButton>
+                    <EdaButton onClick={handleCorrelationClick} descr="Корреляция числовых данных">correlation</EdaButton>
                 </ul>
             </div>
 
@@ -106,15 +119,18 @@ export default function Eda({ data }) {
                 </div>
             )}
 
-            {renderedData.values && renderedData.values.length > 0 && !loading && (
-                <>
-                    <div className="eda-descr-container">
-                        <h1 className="eda-main-text">{tableTitle}</h1>
-                        <span className="eda-subtitle-text">{tableDescription}</span>
-                    </div>
-                    <EdaTable columns={renderedData.columns} values={renderedData.values} />
-                </>
+            {(renderedData.values && renderedData.values.length > 0 && !loading || customComponent !== null) && (
+                <div className="eda-descr-container">
+                    <h1 className="eda-main-text">{tableTitle}</h1>
+                    <span className="eda-subtitle-text">{tableDescription}</span>
+                </div>
             )}
+
+            {renderedData.values && renderedData.values.length > 0 && !loading && (
+                <EdaTable columns={renderedData.columns} values={renderedData.values} />
+            )}
+
+            {customComponent !== null && customComponent}
         </div>
     );
 }
