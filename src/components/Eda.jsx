@@ -4,6 +4,7 @@ import EdaTable from './UI/table/EdaTable';
 import valueCounts from './features/ValueCounts'
 import NumberDescriptionWrapper from './features/NumberDescriptionWrapper'
 import NumberCorrelationHeatmap from './features/NumberCorrelation'
+import NumberDistribution from './features/NumberDistribution'
 import '../styles/Eda.css'
 import trashCan from '../assets/trash-can.svg'
 
@@ -97,6 +98,15 @@ export default function Eda({ data }) {
         setCustomComponent(<NumberCorrelationHeatmap df={data} />);
     };
 
+    const handleNumberDistributionClick = async () => {
+        setTitle("Распределение значений");
+        setDescription("Графики распределений числовых значений");
+
+        setRenderedData({ columns: [], values: [] });
+        setLoading(false);
+        setCustomComponent(<NumberDistribution df={data} />);
+    };
+
     return (
         <div className="eda-wrapper">
             <div className="eda-block">
@@ -109,6 +119,7 @@ export default function Eda({ data }) {
                 <ul className="eda-section">
                     <EdaButton onClick={handleDescriptionClick} descr="Описательная статистика числовых данных">describe</EdaButton>
                     <EdaButton onClick={handleCorrelationClick} descr="Корреляция числовых данных">correlation</EdaButton>
+                    <EdaButton onClick={handleNumberDistributionClick} descr="Распределение числовых данных">distribution</EdaButton>
                 </ul>
             </div>
 
