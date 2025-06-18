@@ -5,6 +5,7 @@ import valueCounts from './features/ValueCounts'
 import NumberDescriptionWrapper from './features/NumberDescriptionWrapper'
 import NumberCorrelationHeatmap from './features/NumberCorrelation'
 import NumberDistribution from './features/NumberDistribution'
+import BoxPlot from './features/BoxPlot'
 import '../styles/Eda.css'
 import trashCan from '../assets/trash-can.svg'
 
@@ -107,6 +108,15 @@ export default function Eda({ data }) {
         setCustomComponent(<NumberDistribution df={data} />);
     };
 
+    const handleBoxPlotClick = async () => {
+        setTitle("BoxPlot");
+        setDescription("Отображает распределение числового набора данных через их квартили. Медиана — центральная линия внутри ящика, показывает середину набора данных. Ящик — прямоугольник, отображающий интерквартильный размах (IQR) между Q1 и Q3. Усы — линии, простирающиеся от ящика до минимального и максимального значений (без выбросов). Выбросы — точки за пределами усов, обычно рассчитываются как значения вне 1,5 × IQR.");
+
+        setRenderedData({ columns: [], values: [] });
+        setLoading(false);
+        setCustomComponent(<BoxPlot df={data} />);
+    };
+
     return (
         <div className="eda-wrapper">
             <div className="eda-block">
@@ -120,6 +130,7 @@ export default function Eda({ data }) {
                     <EdaButton onClick={handleDescriptionClick} descr="Описательная статистика числовых данных">describe</EdaButton>
                     <EdaButton onClick={handleCorrelationClick} descr="Корреляция числовых данных">correlation</EdaButton>
                     <EdaButton onClick={handleNumberDistributionClick} descr="Распределение числовых данных">distribution</EdaButton>
+                    <EdaButton onClick={handleBoxPlotClick} descr="Ящик с усами">boxplot</EdaButton>
                 </ul>
             </div>
 
