@@ -1,7 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import EdaButton from './UI/button/EdaButton'
 import EdaTable from './UI/table/EdaTable';
-import valueCounts from './features/ValueCounts'
+import ValueCounts from './features/ValueCounts'
+import ValueCountsPlot from './features/ValueCountsPlot'
 import NumberDescriptionWrapper from './features/NumberDescriptionWrapper'
 import NumberCorrelationHeatmap from './features/NumberCorrelation'
 import NumberDistribution from './features/NumberDistribution'
@@ -76,10 +77,18 @@ export default function Eda({ data }) {
     const handleValueCountsClick = () => {
         setProgress(0);
         handleEdaAction('value counts', () => {
-            const valueCountsValues = valueCounts(data.values, data.columns);
+            const valueCountsValues = ValueCounts(data.values, data.columns);
             return { columns: data.columns, values: [valueCountsValues] };
         },
             "Частота встречаемости значений", "Количество раз встречаемости каждого уникального значения");
+    };
+
+    const handleValueCountsPlotClick = () => {
+        setTitle("Частота встречаемости значений");
+        setDescription("Столбчатые диаграммы частоты встречаемости каждого уникального значения")
+        setRenderedData({ columns: [], values: [] });
+        setLoading(false);
+        setCustomComponent(<ValueCountsPlot values={data.values} columns={data.columns} />);
     };
 
     const handleDescriptionClick = async () => {
@@ -124,7 +133,10 @@ export default function Eda({ data }) {
                 <ul className="eda-section">
                     <EdaButton onClick={handleNullClick} descr="Показать количество пропущенных значений">null</EdaButton>
                     <EdaButton onClick={handleUniqueClick} descr="Показать количество уникальных значений">unique</EdaButton>
-                    <EdaButton onClick={handleValueCountsClick} descr="Показать частоту встречаемости значений">value counts</EdaButton>
+                    <div className="eda-button-column-container">
+                        <EdaButton onClick={handleValueCountsClick} descr="Показать частоту встречаемости значений">value counts</EdaButton>
+                        <EdaButton onClick={handleValueCountsPlotClick} descr="Графики частот встречаемости значений">📊</EdaButton>
+                    </div>
                 </ul>
                 <ul className="eda-section">
                     <EdaButton onClick={handleDescriptionClick} descr="Описательная статистика числовых данных">describe</EdaButton>

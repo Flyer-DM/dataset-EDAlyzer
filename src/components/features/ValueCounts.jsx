@@ -25,7 +25,7 @@ function ValueCountList({ entries }) {
     );
 }
 
-export default function valueCounts(values, columns) {
+export default function ValueCounts(values, columns) {
     const colCount = columns.length;
     const countsPerColumn = Array.from({ length: colCount }, () => ({}));
 

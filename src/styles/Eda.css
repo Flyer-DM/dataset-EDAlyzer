@@ -5,7 +5,7 @@
 .eda-block {
   display: flex;
   gap: 15px;
-  height: 45px;
+  height: 90px;
   margin-left: 10px;
 }
 
@@ -67,4 +67,12 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.eda-button-column-container {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import BoxPlotPlot from '../UI/plot/BoxPlot'
+import SelectSearch from '../UI/select/SelectSearch'
 
 
 export default function BoxPlot({ df }) {
@@ -12,18 +13,11 @@ export default function BoxPlot({ df }) {
 
     return (
         <>
-            <label>
-                <select
-                    value={selectedCol}
-                    onChange={e => setSelectedCol(e.target.value)}
-                    style={{ marginLeft: 10 }}>
-                    {numericCols.map(col => (
-                        <option key={col} value={col}>
-                            {col}
-                        </option>
-                    ))}
-                </select>
-            </label>
+            <SelectSearch
+                options={numericCols}
+                value={selectedCol}
+                onChange={setSelectedCol}
+            />
             <div className="number-distribution-container">
                 <div className="number-distribution-inner">
                     <BoxPlotPlot df={df} selectedCol={selectedCol} />
